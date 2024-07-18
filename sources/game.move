@@ -6,7 +6,7 @@ module game::game {
     use aptos_framework::event::{EventHandle, emit_event};
     use aptos_framework::signer::Signer;
     use aptos_framework::timestamp;
-    use aptos_framework::table::{self, Table};
+    use aptos_framework::table::{Self, Table};
     use aptos_framework::account;
 
     // struct
@@ -40,6 +40,7 @@ module game::game {
         rewards: Table<address, u64>,
         deposits: Table<u64, u64>, // holds total apt deposit in the room
         player_rooms: Table<address, u64>, // tracks which room each player is in
+        points: Table<address, u64>, // tracks points for each player
     }
     
     // init contract
@@ -52,6 +53,7 @@ module game::game {
             rewards: Table::new(),
             deposits: Table::new(),
             player_rooms: Table::new(),
+            points: Table::new(),
         });
     }
     
@@ -169,6 +171,13 @@ module game::game {
         let current_reward = *table::borrow(&state.rewards, winner);
         table::add(&mut state.rewards, winner, current_reward + total_pot);
 
+        // update the winner's points
+        if !table::contains(&state.points, winner) {
+            table::add(&mut state.points, winner, 0);
+        }
+        let current_points = *table::borrow(&state.points, winner);
+        table::add(&mut state.points, winner, current_points + 1);
+
         AptosCoin::deposit(&account, total_pot);
 
         table::remove(&mut state.rooms, room_id);
@@ -219,6 +228,53 @@ module game::game {
         let state = borrow_global<State>(@0x1);
         let room = table::borrow(&state.rooms, room_id);
         (room.room_name, room.creator, room.player, room.bet_amount, room.creator_ready, room.player_ready)
+    }
+
+
+    public fun show_leaderboard_by_top(top_n: u64): vector<(address, u64)> {
+        let state = borrow_global<State>(@0x1);
+        let keys = table::keys(&state.points);
+        let mut leaderboard = vector::empty<(address, u64)>();
+
+        let len = vector::length(&keys);
+        let mut i = 0;
+        while (i < len) {
+            let player = *vector::borrow(&keys, i);
+            let points = *table::borrow(&state.points, player);
+            vector::push_back(&mut leaderboard, (player, points));
+            i = i + 1;
+        }
+
+        // sort leaderboard by points in descending order
+        vector::sort_by(&mut leaderboard, fun((a, b): &(address, u64), (c, d): &(address, u64)): bool {
+            b > d
+        });
+
+        // return the top_n players
+        vector::truncate(&mut leaderboard, top_n);
+        leaderboard
+    }
+
+    public fun show_all_leaderboard(): vector<(address, u64)> {
+        let state = borrow_global<State>(@0x1);
+        let keys = table::keys(&state.points);
+        let mut leaderboard = vector::empty<(address, u64)>();
+
+        let len = vector::length(&keys);
+        let mut i = 0;
+        while (i < len) {
+            let player = *vector::borrow(&keys, i);
+            let points = *table::borrow(&state.points, player);
+            vector::push_back(&mut leaderboard, (player, points));
+            i = i + 1;
+        }
+
+        // sort the leaderboard by points in descending order
+        vector::sort_by(&mut leaderboard, fun((a, b): &(address, u64), (c, d): &(address, u64)): bool {
+            b > d
+        });
+
+        leaderboard
     }
 
     // testing funcs
@@ -347,5 +403,65 @@ module game::game {
         assert!(bet == bet_amount, 904);
         assert!(creator_ready, 905);
         assert!(player_ready, 906);
+    }
+
+     #[test]
+    public fun test_show_leaderboard_by_top() {
+        let account1 = @0x1;
+        let account2 = @0x2;
+        let account3 = @0x3;
+        let bet_amount = 100;
+        let room_name = b"Test Room";
+
+        create_room(&account1, room_name, bet_amount);
+        join_room(&account2, 0);
+        ready(&account2, 0);
+        announce_winner(&account1, 0, signer::address_of(&account1));
+
+        create_room(&account2, room_name, bet_amount);
+        join_room(&account3, 1);
+        ready(&account3, 1);
+        announce_winner(&account2, 1, signer::address_of(&account2));
+
+        create_room(&account1, room_name, bet_amount);
+        join_room(&account3, 2);
+        ready(&account3, 2);
+        announce_winner(&account1, 2, signer::address_of(&account1));
+
+        let leaderboard = show_leaderboard(3);
+        assert!(vector::length(&leaderboard) == 3, 1001);
+        assert!(vector::borrow(&leaderboard, 0)._1 == signer::address_of(&account1), 1002);
+        assert!(vector::borrow(&leaderboard, 1)._1 == signer::address_of(&account2), 1003);
+        assert!(vector::borrow(&leaderboard, 2)._1 == signer::address_of(&account3), 1004);
+    }
+
+    #[test]
+    public fun test_show_all_leaderboard() {
+        let account1 = @0x1;
+        let account2 = @0x2;
+        let account3 = @0x3;
+        let bet_amount = 100;
+        let room_name = b"Test Room";
+
+        create_room(&account1, room_name, bet_amount);
+        join_room(&account2, 0);
+        ready(&account2, 0);
+        announce_winner(&account1, 0, signer::address_of(&account1));
+
+        create_room(&account2, room_name, bet_amount);
+        join_room(&account3, 1);
+        ready(&account3, 1);
+        announce_winner(&account2, 1, signer::address_of(&account2));
+
+        create_room(&account1, room_name, bet_amount);
+        join_room(&account3, 2);
+        ready(&account3, 2);
+        announce_winner(&account1, 2, signer::address_of(&account1));
+
+        let leaderboard = show_all_leaderboard();
+        assert!(vector::length(&leaderboard) == 3, 1001);
+        assert!(vector::borrow(&leaderboard, 0)._1 == signer::address_of(&account1), 1002);
+        assert!(vector::borrow(&leaderboard, 1)._1 == signer::address_of(&account2), 1003);
+        assert!(vector::borrow(&leaderboard, 2)._1 == signer::address_of(&account3), 1004);
     }
 }
