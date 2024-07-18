@@ -236,16 +236,6 @@ module game::game {
         available_rooms
     }
 
-    // show reward claimed by account id
-    public fun show_rewards_by_account_id(account: address): u64 {
-        let state = borrow_global<State>(@0x1);
-        if table::contains(&state.rewards, account) {
-            *table::borrow(&state.rewards, account)
-        } else {
-            0
-        }
-    }
-
     // show room details including players
     public fun show_room_details_by_room_id(room_id: u64): (vector<u8>, address, option::Option<address>, u64, bool, bool) {
         let state = borrow_global<State>(@0x1);
