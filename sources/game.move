@@ -152,7 +152,7 @@ module game::game {
         claim_winnings(winner, room_id, winner);
     }
 
-    // Claim winnings function
+    // claim winnings func
     public fun claim_winnings_by_room_id(account: address, room_id: u64, winner: address) {
         let state = borrow_global_mut<State>(account);
         let room = table::borrow_mut(&mut state.rooms, room_id);
