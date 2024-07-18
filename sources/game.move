@@ -9,7 +9,7 @@ module game::game {
     use aptos_framework::table::{Self, Table};
     use aptos_framework::account;
 
-    //struct
+    // struct 
     struct CreateRoomEvent has key, store {
         room_id: u64,
         creator: address,
@@ -34,19 +34,21 @@ module game::game {
         next_room_id: u64,
         create_room_events: EventHandle<CreateRoomEvent>,
         ready_events: EventHandle<ReadyEvent>,
+        rewards: Table<address, u64>,
     }
     
-    //init func
+    // Initialize the contract
     public fun init_room(account: &signer) {
         move_to(account, State {
             rooms: Table::new(),
             next_room_id: 0,
             create_room_events: EventHandle::new<CreateRoomEvent>(account),
             ready_events: EventHandle::new<ReadyEvent>(account),
+            rewards: Table::new(),
         });
     }
     
-    //create room
+    // create room
     public fun create_room(account: &signer, bet_amount: u64) {
         let state = borrow_global_mut<State>(signer::address_of(account));
         let room_id = state.next_room_id;
@@ -75,7 +77,7 @@ module game::game {
         AptosCoin::withdraw(account, bet_amount);
     }
     
-    //join
+    // join room
     public fun join_room(account: &signer, room_id: u64) {
         let state = borrow_global_mut<State>(signer::address_of(account));
         let room = table::borrow_mut(&mut state.rooms, room_id);
@@ -84,7 +86,7 @@ module game::game {
         room.player = option::some(signer::address_of(account));
     }
     
-    //ready
+    // ready 
     public fun ready(account: &signer, room_id: u64) {
         let state = borrow_global_mut<State>(signer::address_of(account));
         let room = table::borrow_mut(&mut state.rooms, room_id);
@@ -105,7 +107,7 @@ module game::game {
         AptosCoin::withdraw(account, room.bet_amount);
     }
 
-    //claim fun
+    // claim 
     // public fun claim_winnings(account: &signer, room_id: u64, winner: address) {
     //     let state = borrow_global_mut<State>(signer::address_of(account));
     //     let room = table::borrow_mut(&mut state.rooms, room_id);
@@ -116,12 +118,48 @@ module game::game {
 
     //     let total_pot = room.bet_amount * 2;
 
+    //     if !table::contains(&state.rewards, winner) {
+    //         table::add(&mut state.rewards, winner, 0);
+    //     }
+
+    //     let current_reward = *table::borrow(&state.rewards, winner);
+    //     table::add(&mut state.rewards, winner, current_reward + total_pot);
+
     //     AptosCoin::deposit(account, total_pot);
 
     //     table::remove(&mut state.rooms, room_id);
     // }
 
-    // Testing functions
+    // show all available rooms
+    public fun show_all_rooms(): vector<u64> {
+        let state = borrow_global<State>(@0x1);
+        let keys = table::keys(&state.rooms);
+        let mut available_rooms = vector::empty<u64>();
+
+        let len = vector::length(&keys);
+        let mut i = 0;
+        while (i < len) {
+            let room_id = *vector::borrow(&keys, i);
+            let room = table::borrow(&state.rooms, room_id);
+            if (!room.ready) {
+                vector::push_back(&mut available_rooms, room_id);
+            }
+            i = i + 1;
+        }
+        available_rooms
+    }
+
+    // show reward claimed by account id
+    public fun show_rewards(account: address): u64 {
+        let state = borrow_global<State>(@0x1);
+        if table::contains(&state.rewards, account) {
+            *table::borrow(&state.rewards, account)
+        } else {
+            0
+        }
+    }
+
+    // testing
 
     #[test]
     public fun test_create_room() {
@@ -185,5 +223,18 @@ module game::game {
     //     let room_exists = table::contains(&state.rooms, 0);
 
     //     assert!(!room_exists, 501);
+
+    //     let rewards = show_rewards(signer::address_of(&account1));
+    //     assert!(rewards == 200, 502); // Total pot is bet_amount * 2
     // }
+
+    #[test]
+    public fun test_show_all_rooms() {
+        let account = @0x1;
+        let bet_amount = 100;
+        create_room(&account, bet_amount);
+
+        let rooms = show_all_rooms();
+        assert!(vector::contains(&rooms, 0), 601);
+    }
 }
