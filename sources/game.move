@@ -399,6 +399,43 @@ module game::game {
     }
 
     #[test]
+    public fun test_show_unclaimed_rewards_by_account_id() {
+        let account1 = @0x1;
+        let account2 = @0x2;
+
+        game::init_room(&account1);
+        let bet_amount = 100;
+        let room_name = b"Test Room";
+
+        game::create_room(&account1, room_name, bet_amount);
+        game::join_room_by_room_id(&account2, 0);
+        game::ready_by_room_id(&account2, 0);
+        game::announce_winner_by_room_id(&account1, 0, account1);
+
+        let unclaimed_rewards = game::show_unclaimed_rewards_by_account_id(account1);
+        assert!(unclaimed_rewards == 200, 102);
+    }
+
+    #[test]
+    public fun test_show_rewards_by_account_id() {
+        let account1 = @0x1;
+        let account2 = @0x2;
+
+        game::init_room(&account1);
+        let bet_amount = 100;
+        let room_name = b"Test Room";
+
+        game::create_room(&account1, room_name, bet_amount);
+        game::join_room_by_room_id(&account2, 0);
+        game::ready_by_room_id(&account2, 0);
+        game::announce_winner_by_room_id(&account1, 0, account1);
+
+        let rewards = game::show_rewards_by_account_id(account1);
+        assert!(rewards == 200, 101);
+    }
+
+
+    #[test]
     public fun test_show_room_details() {
         let account1 = @0x1;
         let account2 = @0x2;
