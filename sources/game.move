@@ -155,9 +155,10 @@ module game::game {
     }
 
     // claim winnings func
-    public fun claim_winnings_by_room_id(account: address, room_id: u64, winner: address) {
-        let state = borrow_global_mut<State>(account);
+    public fun claim_winnings_by_room_id(account: &signer, room_id: u64) {
+        let state = borrow_global_mut<State>(signer::address_of(account));
         let room = table::borrow_mut(&mut state.rooms, room_id);
+        let winner = signer::address_of(account);
 
         assert!(room.creator_ready && room.player_ready, 104);
         assert!(winner == room.creator || (option::is_some(&room.player) && winner == *option::borrow(&room.player)), 105);
@@ -178,7 +179,7 @@ module game::game {
         let current_points = *table::borrow(&state.points, winner);
         table::add(&mut state.points, winner, current_points + 1);
 
-        AptosCoin::deposit(&account, total_pot);
+        AptosCoin::deposit(account, total_pot);
 
         table::remove(&mut state.rooms, room_id);
         table::remove(&mut state.deposits, room_id);
