@@ -154,6 +154,28 @@ module game::game {
         claim_winnings(winner, room_id, winner);
     }
 
+    // show unclaimed rewards by account id
+    public fun show_unclaimed_rewards_by_account_id(account: address): u64 {
+        let state = borrow_global<State>(@0x1);
+        if table::contains(&state.rewards, account) {
+            let rewards = *table::borrow(&state.rewards, account);
+            rewards // return unclaimed rewards
+        } else {
+            0 // no unclaimed rewards
+        }
+    }
+
+    // show reward claimed by account id
+    public fun show_rewards_by_account_id(account: address): u64 {
+        let state = borrow_global<State>(@0x1);
+        if table::contains(&state.rewards, account) {
+            *table::borrow(&state.rewards, account)
+        } else {
+            0
+        }
+    }
+
+
     // claim winnings func
     public fun claim_winnings_by_room_id(account: &signer, room_id: u64) {
         let state = borrow_global_mut<State>(signer::address_of(account));
