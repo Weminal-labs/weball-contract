@@ -54,7 +54,7 @@ hiện chi tiết một phòng theo id
 room_id: u64
 ```
 
+### update bot tracking sự kiện onchain
 
-
-
+### update deploy telegram webapp && deploy to Erason web3 game marketplace on aptos eragon.gg/store/onchain-games
 
