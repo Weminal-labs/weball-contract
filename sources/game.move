@@ -37,7 +37,7 @@ module game::game {
         rewards: Table<address, u64>,
     }
     
-    // Initialize the contract
+    // init func
     public fun init_room(account: &signer) {
         move_to(account, State {
             rooms: Table::new(),
