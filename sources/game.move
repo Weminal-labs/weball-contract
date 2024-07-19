@@ -141,13 +141,13 @@ module game::game {
         // refund bet amount to creator
         AptosCoin::deposit(account, room.bet_amount);
 
-        // Remove the room
+        // remove room
         table::remove(&mut state.rooms, room_id);
         table::remove(&mut state.deposits, room_id);
-        table::remove(&mut state.player_rooms, signer::address_of(account)); // remove the player's room tracking
+        table::remove(&mut state.player_rooms, signer::address_of(account)); // remove player's room tracking
     }
 
-    // announce winner func to be called only by owner's contract
+    // announce winner func to be call only by owner's contract
     public fun announce_winner_by_room_id(signer: &signer, room_id: u64, winner: address) {
         assert!(signer::address_of(signer) == game::game_address(), 108); // make sure only the owner's contract can call this function
 
