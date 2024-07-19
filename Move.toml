@@ -4,9 +4,7 @@ version = "1.0.0"
 authors = []
 
 [addresses]
-game = "0x33ddbc7bf7504b4c3eddabd7459139f2b1b4a2e1334a5750b934c51dc72005a3"
-[dev-addresses]
-gamedev = "0x33ddbc7bf7504b4c3eddabd7459139f2b1b4a2e1334a5750b934c51dc72005a3"
+admin = "954f6f57dd55068f7ba02d44278cca5444aa8c328de50a51feb2e21d3c7420f2"
 
 [dependencies.AptosFramework]
 git = "https://github.com/aptos-labs/aptos-core.git"

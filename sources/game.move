@@ -1,4 +1,4 @@
-module game::game {
+module admin::game {
 
     use std::option;
     use std::vector;
