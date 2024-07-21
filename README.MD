@@ -42,7 +42,7 @@ winner: address
 ```
 ## get
 
-`show_all_rooms`
+`get_all_rooms`
 hiện tất cả phòng
 
 ‎`show_all_available_rooms`
