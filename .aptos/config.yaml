@@ -1,9 +1,9 @@
 ---
 profiles:
-  default:
+  hoang:
     network: Testnet
-    private_key: "0xbc4194cb669d3c1621b2a76de08d0986e5d298d724c116614f72383fdb7fb58f"
-    public_key: "0x9a94fe8cac294fdd213f55b4a951ef75b3bd08dfba692f654ae9df38799ea521"
-    account: 993792282955152d6923f5ff424d97983cdd76d2b008148a950676ac2ed5202b
+    private_key: "0xffc4b2f3ff4d6c0b7993b333427b52b12ef64b8a9f8bda674f849054fe911fac"
+    public_key: "0x4538b7af2416ce40fd992fab472fc95ad8586977f687244a81d63be2649bd593"
+    account: 8f6e794270fc0e72599e3368795588a326aa248958239cd33b324fe27a81d964
     rest_url: "https://fullnode.testnet.aptoslabs.com"
     faucet_url: "https://faucet.testnet.aptoslabs.com"

@@ -1,4 +1,4 @@
-module admin::gamev2 {
+module admin::gamev3 {
     use std::signer;
     use std::string::{String, Self};
     use std::vector;
@@ -79,6 +79,7 @@ module admin::gamev2 {
         };
         move_to(admin, state);
     }
+
     #[view]
      public fun get_all_rooms(): vector<Room> acquires RoomState {
         let state = borrow_global<RoomState>(@admin);
