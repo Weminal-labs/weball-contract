@@ -8,6 +8,12 @@ room_name: vector<u8>,
 bet_amount: u64,
 ```
 
+## get
+
+`get_all_rooms`
+hiện tất cả phòng
+
+
 `join_room_by_room_id`
 ```
 account: &signer, //người join là người kí nên không cần nhập
@@ -40,10 +46,6 @@ signer: &signer,
 room_id: u64, 
 winner: address
 ```
-## get
-
-`get_all_rooms`
-hiện tất cả phòng
 
 ‎`show_all_available_rooms`
 hiện tất cả phòng chưa có player2
