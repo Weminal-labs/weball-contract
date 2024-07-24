@@ -58,3 +58,6 @@ room_id: u64
 
 ### update deploy telegram webapp && deploy to Erason web3 game marketplace on aptos eragon.gg/store/onchain-games
 
+```
+https://explorer.aptoslabs.com/account/0x83762420e8c85cf4052585d3e181794a80d113af1a67f90a5c9010e11c644104/modules/run/gamev3/create_room?network=testnet
+```
