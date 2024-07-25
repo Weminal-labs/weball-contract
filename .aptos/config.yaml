@@ -1,9 +1,9 @@
 ---
 profiles:
-  default:
-    network: Testnet
-    private_key: "0xadf4338cd611ae44c9a8b39fddc29e4f3a930e65b7e16932573c4d0206bf1136"
-    public_key: "0x068eba855f7ff5776707f90e5bd667a9e90d99737a6b2a2ff2f002cba4ccf176"
-    account: 954f6f57dd55068f7ba02d44278cca5444aa8c328de50a51feb2e21d3c7420f2
-    rest_url: "https://fullnode.testnet.aptoslabs.com"
-    faucet_url: "https://faucet.testnet.aptoslabs.com"
+ admin_gamev2:
+   network: Testnet
+   private_key: "0xadd7e2530b60a436bdfd5afa8c68ddf0b4913f0d8f1e8d712fbd67e7783de973"
+   public_key: "0x85b09fc7fba678792a30a3a7047932905343d956767dd2a6125533eaaa74603a"
+   account: 0cc00fe367a4f9e47b7252c98b3245db3dfb27aea30e5680dc557ebf5aab1a20
+   rest_url: "https://fullnode.testnet.aptoslabs.com"
+   faucet_url: "https://faucet.testnet.aptoslabs.com"
