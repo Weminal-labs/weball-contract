@@ -8,12 +8,19 @@ Admin: The owner or controller of the contract who has special permissions, like
 
 ### 2. Internal Methods:
 `create_room`: Allows a player to create a new room with specific parameters.
+
 `create_account`: Registers a new player with the contract to store point, game_played, winning_games.
+
 `join_room_by_room_id`: Allows a player to join a room by providing the room ID.
+
 `ready_by_room_id`: Marks a player as ready in a room.
+
 `leave_by_room_id`: Allows a player to leave a room (creator can only leave when nobody joined && player2 can only leave when field is_player2_ready = false).
+
 `claim_reward`: Allows players to claim their refund after leaving a room.
+
 `pick_winner_and_transfer_bet`: Allows ADMIN Game to pick a winner and transfer the bet amount after game end.
+
 
 #### create a new room:
 ```
