@@ -1,39 +1,19 @@
-# How to use this contract
+# Smart Contract Specifications
 
-### 1. clone the repo
-```
-https://github.com/weminal-labs/weball-contract.git
-```
+### 1. Involved Actors.
 
-### 2. cd weball-contract
+Player: Users who interact with the contract by create room, joining rooms,...
 
-### 3. init your aptos address
-make sure that aptos cli & aptos installed
+Admin: The owner or controller of the contract who has special permissions, like picking a winner.
 
-```
-aptos init --profile <your_profile_name>
-```
-
-### 4. config your address
-in your Move.toml, add your wallet to admin 
-admin = "your_address"
-
-### 5. build file
-```
-aptos move compile
-```
-
-### 6. deploy the contract
-```
-aptos move publish --profile <your_profile_name>
-```
-
-### 7. after deploy contract, you gotta init contract
-```
-aptos move run --function-id <your_address_deployed>::gamev3::init_contract --profile <your_profile_name>
-```
-
-### 8. call the functions
+### 2. Internal Methods:
+`create_room`: Allows a player to create a new room with specific parameters.
+`create_account`: Registers a new player with the contract to store point, game_played, winning_games.
+`join_room_by_room_id`: Allows a player to join a room by providing the room ID.
+`ready_by_room_id`: Marks a player as ready in a room.
+`leave_by_room_id`: Allows a player to leave a room (creator can only leave when nobody joined && player2 can only leave when field is_player2_ready = false).
+`claim_reward`: Allows players to claim their refund after leaving a room.
+`pick_winner_and_transfer_bet`: Allows ADMIN Game to pick a winner and transfer the bet amount after game end.
 
 #### create a new room:
 ```
@@ -100,13 +80,12 @@ aptos move run --function-id <your_address_deployed>::gamev3::claim_reward --pro
 aptos move run --function-id <your_address_deployed>::gamev3::pick_winner_and_transfer_bet --args u64:<room_id> address:<address_winner>  --profile <your_profile_name>
 ```
 
-### 9. view the functions
+### 3. External Methods
+#### get_all_rooms: Retrieves all created rooms.
 
-#### get_all_rooms to see all rooms created
+#### get_player_info: Retrieves information about a player.
 
-#### get_player_info to see player info (get issue now, updating...)
-
-#### room_detail_by_room_id
+#### room_detail_by_room_id: Retrieves detailed information about a specific room.
 example data:
 ```
 0x29c328d0e7cb0ee03ee1a786cda4cf740576ef39c8ca53363c7dd622a5af4622
