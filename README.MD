@@ -112,3 +112,17 @@ false
   "vec": []
 }
 ```
+
+### Updating 
+
+deadline 27/7
+`get_top100_playerhighest_point`: get point in top 100 players who got the highest point. (add fields game_played, winning_games to show winrate)
+
+### Future feat
+
+marketplace like using point to buy nfts or something....
+
+v2 game using randomness
+
+
+
