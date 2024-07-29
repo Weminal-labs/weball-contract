@@ -21,6 +21,19 @@ Admin: The owner or controller of the contract who has special permissions, like
 
 `pick_winner_and_transfer_bet`: Allows ADMIN Game to pick a winner and transfer the bet amount after game end.
 
+`send_global_chat_message`: Allows a player to send a message to the global chat.
+
+`send_chat_to_room_id`: Allows a player to send a message to a specific room.
+
+`update_account`: Updates a player's account information (name and username).
+
+`create_room_mate`: Creates a room with an invitation for a specific friend to join.
+
+`add_friend`: Allows a player to add another player as a friend.
+
+`give_like_account`: Allows a player to like another player's account.
+
+`give_dislike_account`: Allows a player to dislike another player's account.
 
 #### create a new room:
 ```
@@ -75,16 +88,44 @@ aptos move run --function-id <your_address_deployed>::gamev3::leave_by_room_id -
 aptos move run --function-id <your_address_deployed>::gamev3::leave_by_room_id --args u64:<room_id> --profile <your_profile_name>
 ```
 
-#### claim refund their apt back after leave the room:
-
-#### creator leave the room (only leave when nobody joins room):
-```
-aptos move run --function-id <your_address_deployed>::gamev3::claim_reward --profile <your_profile_name>
-```
-
 #### pick winner (only admin can call this func):
 ```
 aptos move run --function-id <your_address_deployed>::gamev3::pick_winner_and_transfer_bet --args u64:<room_id> address:<address_winner>  --profile <your_profile_name>
+```
+
+#### Sending a Global Chat Message:
+```
+aptos move run --function-id <your_address_deployed>::gamev3::send_global_chat_message --args string:<message> --profile <your_profile_name>
+```
+
+#### Sending a Message to a Room:
+```
+aptos move run --function-id <your_address_deployed>::gamev3::send_chat_to_room_id --args u64:<room_id> string:<message> --profile <your_profile_name>
+```
+
+#### Updating Player Account:
+```
+aptos move run --function-id <your_address_deployed>::gamev3::update_account --args string:<new_name> string:<new_username> --profile <your_profile_name>
+```
+
+#### Creating a Room with a Friend:
+```
+aptos move run --function-id <your_address_deployed>::gamev3::create_room_mate --args string:<room_name> u64:<bet_amount> string:<friend_username> --profile <your_profile_name>
+```
+
+#### Adding a Friend:
+```
+aptos move run --function-id <your_address_deployed>::gamev3::add_friend --args string:<friend_username> --profile <your_profile_name>
+```
+
+#### Liking a Player:
+```
+aptos move run --function-id <your_address_deployed>::gamev3::give_like_account --args address:<liked_address> --profile <your_profile_name>
+```
+
+#### Disliking a Player:
+```
+aptos move run --function-id <your_address_deployed>::gamev3::give_dislike_account --args address:<disliked_address> --profile <your_profile_name>
 ```
 
 ### 3. External Methods
@@ -93,6 +134,14 @@ aptos move run --function-id <your_address_deployed>::gamev3::pick_winner_and_tr
 #### get_player_info: Retrieves information about a player.
 
 #### room_detail_by_room_id: Retrieves detailed information about a specific room.
+
+#### get_top_100_players: Retrieves the top 100 players with the highest points, including their games played and winning games.
+#### get_chat_messages: Retrieves chat messages for a specific room.
+#### get_global_chat_messages: Retrieves global chat messages.
+#### get_friend_list: Retrieves the friend list of a player.
+#### get_room_now: Retrieves the current room a player is in.
+#### get_player_username: Retrieves a player's username.
+#### search_rooms: Searches for rooms based on a search term.
 example data:
 ```
 0x29c328d0e7cb0ee03ee1a786cda4cf740576ef39c8ca53363c7dd622a5af4622
