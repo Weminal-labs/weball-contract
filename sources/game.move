@@ -1,4 +1,5 @@
 module admin::gamev3 {
+    // === Imports ===
    use std::string::{Self, String, sub_string};
    use aptos_std::simple_map::{Self, SimpleMap};
    use std::signer;
@@ -10,7 +11,7 @@ module admin::gamev3 {
    use aptos_framework::account;
    use std::option::{Option, Self};
 
-
+    // === Errors ===
    //errors handling
    const E_ROOM_NOT_FOUND: u64 = 1001;
    const E_PLAYER_ALREADY_READY: u64 = 1002;
@@ -33,14 +34,16 @@ module admin::gamev3 {
    const E_NOT_FRIENDS: u64 = 1019;
 
 
+    // === Constants ===
 
-
-  // constants for default values
+    // constants for default values
    const DEFAULT_NAME: vector<u8> = b"No_name";
    // const DEFAULT_IMAGE_LINK: vector<u8> = b"Image address not found";
    // const DEFAULT_HASH: vector<u8> = b"not found";
    const SEED: vector<u8> = b"REFUND_POOL_RESOURCE_ACCOUNT";
-  
+
+    // === Structs ===
+
    // struct to define a Room
    struct Room has key, store, copy, drop {
       creator: address,
@@ -157,6 +160,7 @@ module admin::gamev3 {
        total_amount: u64,
    }
 
+    // === Public-Mutative Functions ===
 
    // function to create a player account
    public fun create_account(
@@ -961,6 +965,7 @@ fun get_address_by_username(username: String): address acquires PlayerAccounts {
    }
 
 
+    // === Public-Helper-View Functions ===
 
 
    //views func
