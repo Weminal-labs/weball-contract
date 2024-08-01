@@ -121,6 +121,7 @@ module admin::gamev3 {
        dislikes_received: u64,
        liked_players: vector<address>,
        disliked_players: vector<address>,
+       tickets: u64,
    }
 
    //store top 100 player
@@ -190,8 +191,7 @@ module admin::gamev3 {
            dislikes_received: 0,
            liked_players: vector::empty<address>(),
            disliked_players: vector::empty<address>(),
-
-
+           tickets: 5, // init with 5 tickets for a player
        };
 
        // create PlayerAccount resource at the player's address
@@ -264,25 +264,34 @@ module admin::gamev3 {
 
 
    public entry fun send_global_chat_message(
-       sender: &signer,
-       message: String
-   ) acquires RoomState {
-       let sender_address = signer::address_of(sender);
-       let state = borrow_global_mut<RoomState>(@admin);
-      
-       let new_message = GlobalChatMessage {
-           sender: sender_address,
-           message,
-           timestamp: timestamp::now_seconds(),
-       };
-      
-       vector::push_back(&mut state.global_chat, new_message);
-      
-       // limit the chat to the last 100 messages
-       if (vector::length(&state.global_chat) > 100) {
-           vector::remove(&mut state.global_chat, 0);
-       };
-   }
+        sender: &signer,
+        message: String
+    ) acquires RoomState, PlayerAccount {
+        let sender_address = signer::address_of(sender);
+        
+        // check if the player has tickets
+        let player_account = borrow_global_mut<PlayerAccount>(sender_address);
+        // assert!(player_account.tickets > 0, 1020); // new error code for no tickets
+        
+        // decrement the ticket
+        player_account.tickets = player_account.tickets - 1;
+        
+        let state = borrow_global_mut<RoomState>(@admin);
+        
+        let new_message = GlobalChatMessage {
+            sender: sender_address,
+            message,
+            timestamp: timestamp::now_seconds(),
+        };
+        
+        vector::push_back(&mut state.global_chat, new_message);
+        
+        // limit the chat to the last 100 messages
+        if (vector::length(&state.global_chat) > 100) {
+            vector::remove(&mut state.global_chat, 0);
+        };
+    }
+
 
 
 
@@ -1210,7 +1219,7 @@ fun get_address_by_username(username: String): address acquires PlayerAccounts {
        };
    }
 
-  //get chat in room id
+   //get chat in room id
    #[view]
    public fun get_chat_messages(room_id: u64): vector<ChatMessage> acquires RoomState {
        let state = borrow_global<RoomState>(@admin);
@@ -1218,19 +1227,26 @@ fun get_address_by_username(username: String): address acquires PlayerAccounts {
        *simple_map::borrow(&state.chats, &room_id)
    }
 
-  //get global chat
+   //get global chat
    #[view]
    public fun get_global_chat_messages(): vector<GlobalChatMessage> acquires RoomState {
        let state = borrow_global<RoomState>(@admin);
        state.global_chat
    }
 
-  // get friend list by address
+   // get friend list by address
    #[view]
    public fun get_friend_list(player_address: address): vector<address> acquires FriendList {
        assert!(exists<FriendList>(player_address), E_FRIEND_LIST_NOT_INITIALIZED);
       
        let friend_list = borrow_global<FriendList>(player_address);
        friend_list.friends
+   }
+   // get ticket's player
+   #[view]
+   public fun get_player_tickets(player_address: address): u64 acquires PlayerAccount {
+        assert!(exists<PlayerAccount>(player_address), E_PLAYER_ACCOUNT_NOT_EXIST);
+        let account = borrow_global<PlayerAccount>(player_address);
+        account.tickets
    }
 }
