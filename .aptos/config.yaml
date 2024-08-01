@@ -1,9 +1,8 @@
 ---
-profiles:
- admin_gamev2:
+ hoang1:
    network: Testnet
-   private_key: "0xadd7e2530b60a436bdfd5afa8c68ddf0b4913f0d8f1e8d712fbd67e7783de973"
-   public_key: "0x85b09fc7fba678792a30a3a7047932905343d956767dd2a6125533eaaa74603a"
-   account: 0cc00fe367a4f9e47b7252c98b3245db3dfb27aea30e5680dc557ebf5aab1a20
+   private_key: "0xee87f9f47a79a0ccc9ab0f31a18a60e96e1de7ee4ed6f6a54081930a54916a45"
+   public_key: "0xcca28d9ca4471f520f68991aa257a6ea1ae70746089e2f8f3640a8dd75553cf6"
+   account: 4dc362f62787da9c0655223fe2819fbac878345cbc5115674e89326e20a42ed7
    rest_url: "https://fullnode.testnet.aptoslabs.com"
    faucet_url: "https://faucet.testnet.aptoslabs.com"
