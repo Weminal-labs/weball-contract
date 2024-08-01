@@ -843,73 +843,44 @@ fun get_address_by_username(username: String): address acquires PlayerAccounts {
 
     //leave room (make sure player2_is_ready = false)
     public entry fun leave_room_by_room_id(
-       player: &signer,
-       room_id: u64
-   ) acquires RoomState {
-       let player_address = signer::address_of(player);
-       let state = borrow_global_mut<RoomState>(@admin);
-       let room_index = 0;
-       let room_found = false;
-       let pool_index = 0;
-       let pool_found = false;
+        player: &signer,
+        room_id: u64
+    ) acquires RoomState {
+        let player_address = signer::address_of(player);
+        let state = borrow_global_mut<RoomState>(@admin);
+        let room_index = 0;
+        let room_found = false;
 
-       while (room_index < vector::length(&state.rooms)) {
-           let room = vector::borrow_mut(&mut state.rooms, room_index);
-           if (room.room_id == room_id) {
-               assert!(!room.is_room_close, E_NOT_AUTHORIZED); // can't leave a closed room
-              
-               // Find the corresponding pool
-               while (pool_index < vector::length(&state.pools)) {
-                   let pool = vector::borrow_mut(&mut state.pools, pool_index);
-                   if (pool.room_id == room_id) {
-                       pool_found = true;
-                       break;
-                   };
-                   pool_index = pool_index + 1;
-               };
-               assert!(pool_found, E_ROOM_NOT_FOUND);
-              
-               let pool = vector::borrow_mut(&mut state.pools, pool_index);
-              
-               if (room.creator == player_address) {
-                   // Creator is leaving
-                   if (room.is_player2_joined) {
-                       // if player2 has joined, just mark creator as not ready
-                       room.creator_ready = false;
-                   } else {
-                       // if player2 hasn't joined, close the room
-                       room.is_room_close = true;
-                   };
-                  
-                   // refund creator's bet from the pool
-                   let refund_amount = if (pool.total_amount >= room.bet_amount) { room.bet_amount } else { pool.total_amount };
-                   if (refund_amount > 0) {
-                       coin::transfer<AptosCoin>(&account::create_signer_with_capability(&state.admin_cap), player_address, refund_amount);
-                       pool.total_amount = pool.total_amount - refund_amount;
-                   };
-               } else if (option::contains(&room.player2, &player_address)) {
-                   // player2 is leaving
-                   room.is_player2_joined = false;
-                   room.is_player2_ready = false;
-                   room.player2 = option::none();
-                  
-                   // Refund player2's bet from the pool
-                   let refund_amount = if (pool.total_amount >= room.bet_amount) { room.bet_amount } else { pool.total_amount };
-                   if (refund_amount > 0) {
-                       coin::transfer<AptosCoin>(&account::create_signer_with_capability(&state.admin_cap), player_address, refund_amount);
-                       pool.total_amount = pool.total_amount - refund_amount;
-                   };
-               } else {
-                   // player is neither creator nor player2
-                   assert!(false, E_NOT_AUTHORIZED);
-               };
-               room_found = true;
-               break;
-           };
-           room_index = room_index + 1;
-       };
-       assert!(room_found, E_ROOM_NOT_FOUND);
-   }
+        while (room_index < vector::length(&state.rooms)) {
+            let room = vector::borrow_mut(&mut state.rooms, room_index);
+            if (room.room_id == room_id) {
+                assert!(!room.is_room_close, E_NOT_AUTHORIZED); // Can't leave a closed room
+                
+                if (room.creator == player_address) {
+                    // Creator is leaving
+                    if (room.is_player2_joined) {
+                        // If player2 has joined, just mark creator as not ready
+                        room.creator_ready = false;
+                    } else {
+                        // If player2 hasn't joined, close the room
+                        room.is_room_close = true;
+                    };
+                } else if (option::contains(&room.player2, &player_address)) {
+                    // Player2 is leaving
+                    room.is_player2_joined = false;
+                    room.is_player2_ready = false;
+                    room.player2 = option::none();
+                } else {
+                    // Player is neither creator nor player2
+                    assert!(false, E_NOT_AUTHORIZED);
+                };
+                room_found = true;
+                break;
+            };
+            room_index = room_index + 1;
+        };
+        assert!(room_found, E_ROOM_NOT_FOUND);
+    }
 
   //parse u64 to string
    fun u64_to_string(value: u64): String {
