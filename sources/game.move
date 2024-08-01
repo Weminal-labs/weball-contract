@@ -1045,58 +1045,114 @@ fun get_address_by_username(username: String): address acquires PlayerAccounts {
    }
 
   //super search: room, username, room id, creator,...
-   #[view]
-   public fun search_rooms(search_term: String): SimpleMap<u64, SearchResult> acquires RoomState, PlayerAccount {
-       let state = borrow_global<RoomState>(@admin);
-       let result = simple_map::create<u64, SearchResult>();
-       let i = 0;
-       let len = vector::length(&state.rooms);
-       while (i < len) {
-           let room = vector::borrow(&state.rooms, i); 
-           if (string_contains(&room.room_name, &search_term) ||
-               string_contains(&get_player_username(room.creator), &search_term) ||
-               (option::is_some(&room.player2) &&
-               string_contains(&get_player_username(*option::borrow(&room.player2)), &search_term))) {
-              
-               let search_result = SearchResult {
-                   room_id: room.room_id,
-                   room_name: room.room_name,
-                   creator_username: get_player_username(room.creator),
-                   player2_username: if (option::is_some(&room.player2)) {
-                       option::some(get_player_username(*option::borrow(&room.player2)))
-                   } else {
-                       option::none()
-                   },
-                   bet_amount: room.bet_amount,
-                   is_room_close: room.is_room_close,
-               };
-               simple_map::add(&mut result, room.room_id, search_result);
-           };
-          
-           i = i + 1;
-       };
-       result
-   }
+  #[view]
+    public fun search_rooms(search_term: String): SimpleMap<u64, SearchResult> acquires RoomState, PlayerAccount {
+        let state = borrow_global<RoomState>(@admin);
+        let result = simple_map::create<u64, SearchResult>();
+        let i = 0;
+        let len = vector::length(&state.rooms);
+        
+        while (i < len) {
+            let room = vector::borrow(&state.rooms, i);
+            let creator_username = get_player_username(room.creator);
+            
+            if (case_insensitive_contains(&room.room_name, &search_term) ||
+                case_insensitive_contains(&creator_username, &search_term) ||
+                (option::is_some(&room.player2) &&
+                case_insensitive_contains(&get_player_username(*option::borrow(&room.player2)), &search_term))) {
+                
+                let search_result = SearchResult {
+                    room_id: room.room_id,
+                    room_name: room.room_name,
+                    creator_username,
+                    player2_username: if (option::is_some(&room.player2)) {
+                        option::some(get_player_username(*option::borrow(&room.player2)))
+                    } else {
+                        option::none()
+                    },
+                    bet_amount: room.bet_amount,
+                    is_room_close: room.is_room_close,
+                };
+                simple_map::add(&mut result, room.room_id, search_result);
+            };
+            
+            i = i + 1;
+        };
+        result
+    }
+
+    // custom case-insensitive string contains function
+    fun case_insensitive_contains(haystack: &String, needle: &String): bool {
+        let haystack_bytes = string::bytes(haystack);
+        let needle_bytes = string::bytes(needle);
+        let haystack_length = vector::length(haystack_bytes);
+        let needle_length = vector::length(needle_bytes);
+        
+        if (needle_length > haystack_length) {
+            return false
+        };
+
+        let i = 0;
+        while (i <= haystack_length - needle_length) {
+            let slice = vector::slice(haystack_bytes, i, i + needle_length);
+            if (case_insensitive_equal(&slice, needle_bytes)) {
+                return true
+            };
+            i = i + 1;
+        };
+        false
+    }
+
+    // custom case-insensitive equality check for byte vector references
+    fun case_insensitive_equal(a: &vector<u8>, b: &vector<u8>): bool {
+        let len_a = vector::length(a);
+        let len_b = vector::length(b);
+        
+        if (len_a != len_b) {
+            return false
+        };
+        
+        let i = 0;
+        while (i < len_a) {
+            let char_a = to_lowercase_char(*vector::borrow(a, i));
+            let char_b = to_lowercase_char(*vector::borrow(b, i));
+            if (char_a != char_b) {
+                return false
+            };
+            i = i + 1;
+        };
+        true
+    }
+
+    // convert a single character to lowercase
+    fun to_lowercase_char(c: u8): u8 {
+        if (c >= 65 && c <= 90) { // ASCII values for 'A' to 'Z'
+            c + 32
+        } else {
+            c
+        }
+    }
 
 
-   // helper function to check if a string contains another string
-   fun string_contains(haystack: &String, needle: &String): bool {
-       let haystack_length = string::length(haystack);
-       let needle_length = string::length(needle);
-      
-       if (needle_length > haystack_length) {
-           return false
-       };
 
-       let i = 0;
-       while (i <= haystack_length - needle_length) {
-           if (sub_string(haystack, i, i + needle_length) == *needle) {
-               return true
-           };
-           i = i + 1;
-       };
-       false
-   }
+    // // helper function to check if a string contains another string
+    // fun string_contains(haystack: &String, needle: &String): bool {
+    //     let haystack_length = string::length(haystack);
+    //     let needle_length = string::length(needle);
+        
+    //     if (needle_length > haystack_length) {
+    //         return false
+    //     };
+
+    //     let i = 0;
+    //     while (i <= haystack_length - needle_length) {
+    //         if (string::sub_string(haystack, i, i + needle_length) == *needle) {
+    //             return true
+    //         };
+    //         i = i + 1;
+    //     };
+    //     false
+    // }
 
 
    #[view]
