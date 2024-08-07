@@ -1,8 +1,8 @@
----
- hoang1:
+g3:
    network: Testnet
-   private_key: "0xee87f9f47a79a0ccc9ab0f31a18a60e96e1de7ee4ed6f6a54081930a54916a45"
-   public_key: "0xcca28d9ca4471f520f68991aa257a6ea1ae70746089e2f8f3640a8dd75553cf6"
-   account: 4dc362f62787da9c0655223fe2819fbac878345cbc5115674e89326e20a42ed7
+   private_key: "0x0cdae4b8e4a1795ffc36d89ebbbdd7bd0cb0e0d81091290096f8d92d40c1fe43"
+   public_key: "0x6a32b7d383e72b8f42eab22d1d11a37ac21f104e81835fc765cf01760c9056ea"
+   account: 82d43a6d4ed3e1b616afa79423d7695b27c40e0262af00cf17402a8629718ceb
    rest_url: "https://fullnode.testnet.aptoslabs.com"
    faucet_url: "https://faucet.testnet.aptoslabs.com"
+
