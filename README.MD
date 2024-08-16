@@ -47,7 +47,7 @@ aptos move run --function-id <your_address_deployed>::gamev3::give_dislike_accou
 aptos move run --function-id <your_address_deployed>::gamev3::leave_room --args u64:<room_id> --profile <your_profile_name>
 ```
 
-####Joining a Room by ID:
+#### Joining a Room by ID:
 ```
 aptos move run --function-id <your_address_deployed>::gamev3::join_room_by_room_id --args u64:<room_id> --profile <your_profile_name>
 ```
