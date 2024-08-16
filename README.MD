@@ -142,36 +142,21 @@ aptos move run --function-id <your_address_deployed>::gamev3::give_dislike_accou
 #### get_room_now: Retrieves the current room a player is in.
 #### get_player_username: Retrieves a player's username.
 #### search_rooms: Searches for rooms based on a search term.
-example data:
-```
-0x29c328d0e7cb0ee03ee1a786cda4cf740576ef39c8ca53363c7dd622a5af4622
-1721921542
-Room001
-1721921542
-1
-true
-true
-false
-{
-  "vec": []
-}
-false
-false
-{
-  "vec": []
-}
-```
 
-### Updating 
+| Function                         | Parameters                                        | Description                           |
+|----------------------------------|--------------------------------------------------|---------------------------------------|
+| `create_room`                    | `&signer`, `0x1::string::String`, `u64`           | Creates a room with a name and bet amount. |
+| `give_dislike_account`           | `&signer`, `address`                              | Dislikes a player's account.          |
+| `give_like_account`              | `&signer`, `address`                              | Likes a player's account.             |
+| `join_room_by_room_id`           | `&signer`, `u64`                                  | Joins a room by its ID.               |
+| `leave_room`                     | `&signer`                                         | Leaves the room.                      |
+| `pick_winner_and_transfer_bet`   | `&signer`, `u64`, `address`                       | Picks the winner and transfers the bet amount. |
+| `ready_by_room_id`               | `&signer`, `u64`                                  | Marks a player as ready by room ID.   |
+| `send_chat_to_room_id`           | `&signer`, `u64`, `0x1::string::String`           | Sends a message to a specific room.   |
+| `send_global_chat_message`       | `&signer`, `0x1::string::String`                  | Sends a message to the global chat.   |
+| `send_message_room_id`           | `&signer`, `u64`, `0x1::string::String`           | Sends a message to a room by its ID.  |
+| `update_account`                 | `&signer`, `0x1::string::String`, `0x1::string::String`, `0x1::string::String` | Updates a player's account information (name, username, etc.). |
 
-deadline 27/7
-`get_top100_playerhighest_point`: get point in top 100 players who got the highest point. (add fields game_played, winning_games to show winrate)
-
-### Future feat
-
-marketplace like using point to buy nfts or something....
-
-v2 game using randomness
 
 
 
