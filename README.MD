@@ -1,4 +1,10 @@
 # Smart Contract Specifications
+This is Specifications contract!
+
+## Social:
+
+If you have any connect please touch my social:
+https://linktr.ee/pichtran
 
 ### 1. Involved Actors.
 
